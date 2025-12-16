@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -33,18 +34,20 @@ kotlin {
     iosSimulatorArm64()
 
     jvm()
-    
+
     js {
         browser()
-//        binaries.executable()
+        // Commented out - means you're creating a JS library, not a standalone app
+        // binaries.executable()
     }
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
-//        binaries.executable()
+        // Commented out - means you're creating a Wasm library, not a standalone app
+        // binaries.executable()
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -59,6 +62,12 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.koog)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            // Koin Annotations
+            api(libs.koin.annotations)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -67,6 +76,10 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
         }
+    }
+
+    sourceSets.named("commonMain").configure {
+        kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
     }
 }
 
@@ -99,6 +112,16 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+
+    add("kspCommonMainMetadata", libs.koin.ksp.compiler)
+    add("kspAndroid", libs.koin.ksp.compiler)
+    add("kspIosArm64", libs.koin.ksp.compiler)
+    add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
+}
+
+// Trigger Common Metadata Generation from Native tasks
+tasks.matching { it.name.startsWith("ksp") && it.name != "kspCommonMainKotlinMetadata" }.configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
 }
 
 compose.desktop {
