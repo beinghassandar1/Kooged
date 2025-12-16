@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -66,7 +67,9 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
-            // Koin Annotations
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization.core)
+            implementation(libs.kotlinx.serialization.json)
             api(libs.koin.annotations)
         }
         commonTest.dependencies {
@@ -83,6 +86,11 @@ kotlin {
     }
 }
 
+ksp {
+    arg("KOIN_CONFIG_CHECK", "true")
+    arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
+}
+
 android {
     namespace = "com.hassan.kooged"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -97,6 +105,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/INDEX.LIST"
+
         }
     }
     buildTypes {
@@ -117,6 +127,8 @@ dependencies {
     add("kspAndroid", libs.koin.ksp.compiler)
     add("kspIosArm64", libs.koin.ksp.compiler)
     add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
+
+//    add("kspCommonMainKotlinMetadata", libs.koin.ksp.compiler)
 }
 
 // Trigger Common Metadata Generation from Native tasks
