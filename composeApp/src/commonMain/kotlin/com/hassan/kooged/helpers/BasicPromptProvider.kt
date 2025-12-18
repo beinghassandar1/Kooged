@@ -2,7 +2,7 @@ package com.hassan.kooged.helpers
 
 interface BasicPromptProvider {
 
-    fun getCalculatorPrompt(): String
+    fun getSimpleSingleShotPrompt(): String
 
     fun getWeatherStationPrompt(): String
 }

@@ -1,14 +1,6 @@
 package com.hassan.kooged.helpers
 
 internal class BasicPromptProviderImpl : BasicPromptProvider {
-    override fun getCalculatorPrompt(): String {
-        return """
-           You are a calculator.
-           You will be provided math problems by the user.
-           Use tools at your disposal to solve them.
-           Provide the answer and ask for the next problem until the user asks to stop.
-        """.trimIndent()
-    }
 
     override fun getWeatherStationPrompt(): String {
         return """
@@ -23,6 +15,13 @@ internal class BasicPromptProviderImpl : BasicPromptProvider {
             ALWAYS USE current_datetime and add_datetime tools to perform date operations, do not try to guess.
             
             When providing weather forecasts, be helpful and informative, explaining the weather conditions in a clear way.
+            """.trimIndent()
+    }
+
+    override fun getSimpleSingleShotPrompt(): String {
+        return """
+            You are a helpful assistant.
+            You can help
             """.trimIndent()
     }
 }

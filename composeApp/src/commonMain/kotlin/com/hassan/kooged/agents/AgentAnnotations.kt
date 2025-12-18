@@ -6,4 +6,12 @@ object AgentAnnotations {
 
     @Named
     annotation class CalculatorAgent
+
+    @Named
+    annotation class CompleteSentenceAgent
+
+    @Named
+    annotation class SimpleChatAgent
+
+
 }

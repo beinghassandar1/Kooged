@@ -13,7 +13,9 @@ plugins {
 }
 
 kotlin {
-//    jvmToolchain(libs.versions.javaVersion.get().toInt())
+    jvmToolchain(libs.versions.javaVersion.get().toInt())
+
+    android
 
     androidTarget {
         compilerOptions {
@@ -30,9 +32,6 @@ kotlin {
             isStatic = true
         }
     }
-
-    iosArm64()
-    iosSimulatorArm64()
 
     jvm()
 
@@ -71,6 +70,11 @@ kotlin {
             implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.serialization.json)
             api(libs.koin.annotations)
+
+            implementation(libs.jetbrains.navigation3.ui)
+            implementation(libs.jetbrains.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.viewmodel.nav3)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

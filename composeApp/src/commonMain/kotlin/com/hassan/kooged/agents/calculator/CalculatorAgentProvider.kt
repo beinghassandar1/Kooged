@@ -20,12 +20,18 @@ import com.hassan.kooged.agents.AgentProvider
 import com.hassan.kooged.models.LlmContext
 import org.koin.ext.getFullName
 
+private const val PROMPT: String = """
+    You are a calculator.
+    You will be provided math problems by the user.
+    Use tools at your disposal to solve them.
+    Provide the answer and ask for the next problem until the user asks to stop.
+    """
+
 /**
  * Factory for creating calculator agents
  */
 internal class CalculatorAgentProvider(
     private val llmContext: LlmContext,
-    private val prompt: String
 ) :
     AgentProvider {
 
@@ -103,7 +109,7 @@ internal class CalculatorAgentProvider(
         val agentConfig = AIAgentConfig(
             prompt = prompt("prompt") {
                 system(
-                    content = prompt
+                    content = PROMPT.trimIndent()
                 )
             },
             model = llmContext.llmModel,
