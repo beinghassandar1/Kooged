@@ -396,7 +396,7 @@ private fun ResultMessageItem(result: CompleteSentenceAgentOutput) {
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(start = AppDimension.spacingSmall)
             )
-            Box(
+            Column(
                 modifier = Modifier
                     .clip(RoundedCornerShape(AppDimension.radiusExtraLarge))
                     .background(MaterialTheme.colorScheme.secondaryContainer)

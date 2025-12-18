@@ -9,5 +9,6 @@ import kotlinx.serialization.Serializable
 @LLMDescription("Output for the agent that completes sentences")
 data class CompleteSentenceAgentOutput(
     @property:LLMDescription("List of suggestions for completing the sentence")
+    @SerialName("suggestions")
     val suggestions: List<SentenceSuggestionOutputEntity>
 )

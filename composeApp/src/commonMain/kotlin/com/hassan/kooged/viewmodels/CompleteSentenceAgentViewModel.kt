@@ -28,7 +28,7 @@ sealed class Message {
 data class AgentDemoUiState(
     val title: String = "Agent Demo",
     val messages: List<Message> = listOf(Message.SystemMessage("Hi, please start writing text")),
-    val inputText: String = "",
+    val inputText: String = "Hallo, ich bin",
     val isInputEnabled: Boolean = true,
     val isLoading: Boolean = false,
     val isChatEnded: Boolean = false,

@@ -29,7 +29,7 @@ private fun buildPrompt(
     The provided suggestions should be in learning languages with translation in fluent Language.
     The only output should be in the following format:
     {
-        "CompleteSentenceSuggestions": [
+        "suggestions": [
             {
             "suggestion": "",
             "translation": "",
@@ -57,25 +57,21 @@ internal class CompleteSentenceAgentProviderImpl(
         val toolRegistry = ToolRegistry.Companion { }
 
         val strategy = strategy(CompleteSentenceAgentProvider::class.getFullName()) {
-            // Node to add user input to the prompt
-            val nodeAddUserInput by node<String, Unit> { userInput ->
-                llm.writeSession {
-                    prompt.user(userInput)
-                }
-            }
-
+            // Node to request LLM response
             val nodeRequestLLM by nodeLLMRequestMultiple()
 
+            // Node to parse the LLM response into CompleteSentenceAgentOutput
             val nodeParseOutput by node<String, CompleteSentenceAgentOutput> { jsonString ->
                 // Parse the JSON string into CompleteSentenceAgentOutput
-                val json = Json { ignoreUnknownKeys = true }
+                val json = Json {
+                    ignoreUnknownKeys = true
+                }
                 json.decodeFromString<CompleteSentenceAgentOutput>(jsonString)
             }
 
-            // Flow: Start -> Add user input -> Request LLM -> Parse output -> Finish
-            edge(nodeStart forwardTo nodeAddUserInput)
-
-            edge(nodeAddUserInput forwardTo nodeRequestLLM)
+            // Flow: Start -> Request LLM -> Parse output -> Finish
+            // The initial user input (String) is automatically added as a user message
+            edge(nodeStart forwardTo nodeRequestLLM)
 
             edge(
                 nodeRequestLLM forwardTo nodeParseOutput
