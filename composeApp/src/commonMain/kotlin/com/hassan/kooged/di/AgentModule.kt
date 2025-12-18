@@ -1,5 +1,6 @@
 package com.hassan.kooged.di
 
+import com.hassan.kooged.agents.AgentAnnotations
 import com.hassan.kooged.agents.AgentProvider
 import com.hassan.kooged.agents.calculator.CalculatorAgentProvider
 import com.hassan.kooged.helpers.AgentContextHelper
@@ -22,6 +23,7 @@ internal class AgentModule {
     fun provideAgentContextHelper() = AgentContextHelperImpl()
 
     @Single(binds = [AgentProvider::class])
+    @AgentAnnotations.CalculatorAgent
     fun calculatorAgentProvider(
         agentContextHelper: AgentContextHelper,
         basicPromptProvider: BasicPromptProvider
@@ -32,6 +34,7 @@ internal class AgentModule {
         )
 
     @KoinViewModel
-    fun agentViewModel(provider: AgentProvider) = CalculatorAgentViewModel(agent = provider)
+    fun agentViewModel(@AgentAnnotations.CalculatorAgent provider: AgentProvider) =
+        CalculatorAgentViewModel(agent = provider)
 }
 
