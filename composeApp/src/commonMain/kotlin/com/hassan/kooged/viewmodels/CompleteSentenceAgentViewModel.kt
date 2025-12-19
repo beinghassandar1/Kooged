@@ -2,8 +2,8 @@ package com.hassan.kooged.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hassan.kooged.agents.CompleteSentenceAgentProvider
-import com.hassan.kooged.agents.completeSentences.CompleteSentenceAgentOutput
+import com.hassan.kooged.agents.completeSentences.agent.CompleteSentenceAgentProvider
+import com.hassan.kooged.agents.completeSentences.entities.CompleteSentenceAgentOutput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

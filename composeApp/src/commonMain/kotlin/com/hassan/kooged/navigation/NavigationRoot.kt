@@ -9,8 +9,8 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.hassan.kooged.agents.completeSentences.screens.CompleteSentenceAgentsScreen
 import com.hassan.kooged.screens.MainScreen
-import com.hassan.kooged.screens.SimpleAgentScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
@@ -45,7 +45,7 @@ fun NavigationRoot(
                 )
             }
             entry<Route.SimpleAgent> {
-                SimpleAgentScreen(
+                CompleteSentenceAgentsScreen(
                     goBack = {
                         rootBackStack.removeLastOrNull()
                     }

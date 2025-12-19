@@ -2,9 +2,9 @@ package com.hassan.kooged.di
 
 import com.hassan.kooged.agents.AgentAnnotations
 import com.hassan.kooged.agents.AgentProvider
-import com.hassan.kooged.agents.CompleteSentenceAgentProvider
 import com.hassan.kooged.agents.calculator.CalculatorAgentProvider
-import com.hassan.kooged.agents.completeSentences.CompleteSentenceAgentProviderImpl
+import com.hassan.kooged.agents.completeSentences.agent.CompleteSentenceAgentProvider
+import com.hassan.kooged.agents.completeSentences.agent.CompleteSentenceAgentProviderImpl
 import com.hassan.kooged.helpers.AgentContextHelper
 import com.hassan.kooged.helpers.AgentContextHelperImpl
 import com.hassan.kooged.helpers.BasicPromptProvider

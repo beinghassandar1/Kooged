@@ -1,4 +1,4 @@
-package com.hassan.kooged.agents.completeSentences
+package com.hassan.kooged.agents.completeSentences.agent
 
 import ai.koog.agents.core.agent.AIAgent
 import ai.koog.agents.core.agent.config.AIAgentConfig
@@ -10,7 +10,8 @@ import ai.koog.agents.core.tools.ToolRegistry
 import ai.koog.agents.features.eventHandler.feature.handleEvents
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.llms.SingleLLMPromptExecutor
-import com.hassan.kooged.agents.CompleteSentenceAgentProvider
+import com.hassan.kooged.agents.completeSentences.entities.CompleteSentenceAgentOutput
+import com.hassan.kooged.agents.completeSentences.entities.SentenceSuggestionOutputEntity
 import com.hassan.kooged.models.LlmContext
 import com.hassan.kooged.utils.LanguageConstants
 import kotlinx.serialization.json.Json
@@ -41,11 +42,13 @@ private fun buildPrompt(
 
 
     return """
-    You are a helpful language assistant.
+    You are a helpful sentence writing assistant.
     User is a learning $learningLanguage language and is fluent in $nativeFluentLanguage. 
-    You will be provided with the start of the sentence user is form in the learning language.
-    Try to complete the sentence and provide at least 3 suggestions. 
-    The provided suggestions should be in learning languages with translation in fluent Language.
+    You will be provided with the start of the sentence user is forming in the learning language.
+    Complete the sentence by providing at least 3 suggestions. The start should be the same. 
+    If there is any mistake in the sentence, correct it but try to be close to the original sentence.
+    The provided suggestions should be in language $learningLanguage and translation in $nativeFluentLanguage Language.
+    Only provide the suggestions in JSON format. Only 1 suggestion in 1 object and 1 translation. 
     The only output should be in the following format:
     $jsonFormat
     """

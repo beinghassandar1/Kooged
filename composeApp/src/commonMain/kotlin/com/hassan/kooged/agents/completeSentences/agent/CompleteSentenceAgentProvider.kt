@@ -1,7 +1,7 @@
-package com.hassan.kooged.agents
+package com.hassan.kooged.agents.completeSentences.agent
 
 import ai.koog.agents.core.agent.AIAgent
-import com.hassan.kooged.agents.completeSentences.CompleteSentenceAgentOutput
+import com.hassan.kooged.agents.completeSentences.entities.CompleteSentenceAgentOutput
 
 interface CompleteSentenceAgentProvider {
 

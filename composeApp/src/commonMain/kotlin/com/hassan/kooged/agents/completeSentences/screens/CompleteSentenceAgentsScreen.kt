@@ -1,4 +1,4 @@
-package com.hassan.kooged.screens
+package com.hassan.kooged.agents.completeSentences.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +26,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,9 +47,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.hassan.kooged.agents.completeSentences.CompleteSentenceAgentOutput
-import com.hassan.kooged.agents.completeSentences.SentenceSuggestionOutputEntity
+import com.hassan.kooged.agents.completeSentences.composables.ResultMessageItem
+import com.hassan.kooged.agents.completeSentences.entities.CompleteSentenceAgentOutput
+import com.hassan.kooged.agents.completeSentences.entities.SentenceSuggestionOutputEntity
 import com.hassan.kooged.viewmodels.CompleteSentenceAgentViewModel
 import com.hassan.kooged.viewmodels.Message
 import com.jetbrains.example.koog.compose.theme.AppDimension
@@ -72,7 +73,7 @@ private fun Preview() {
 }
 
 @Composable
-fun SimpleAgentScreen(
+fun CompleteSentenceAgentsScreen(
     modifier: Modifier = Modifier,
     viewModel: CompleteSentenceAgentViewModel = koinViewModel(),
     goBack: () -> Unit,
@@ -89,7 +90,8 @@ fun SimpleAgentScreen(
         onInputTextChanged = viewModel::updateInputText,
         onSendClicked = viewModel::sendMessage,
         onRestartClicked = viewModel::restartChat,
-        onNavigateBack = goBack
+        onNavigateBack = goBack,
+        modifier = modifier
     )
 }
 
@@ -175,7 +177,8 @@ private fun AgentDemoScreenContent(
     onInputTextChanged: (String) -> Unit,
     onSendClicked: () -> Unit,
     onRestartClicked: () -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
     val focusRequester = remember { FocusRequester() }
@@ -202,7 +205,8 @@ private fun AgentDemoScreenContent(
                 }
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = modifier
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -380,47 +384,6 @@ private fun ToolCallMessageItem(text: String) {
     }
 }
 
-@Composable
-private fun ResultMessageItem(result: CompleteSentenceAgentOutput) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        Column(
-            modifier = Modifier
-                .widthIn(max = 280.dp)
-        ) {
-            Text(
-                text = "Result",
-                color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(start = AppDimension.spacingSmall)
-            )
-            Column(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(AppDimension.radiusExtraLarge))
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
-                    .padding(AppDimension.spacingMedium)
-            ) {
-                result.suggestions.forEachIndexed { index, entity ->
-                    Text(
-                        text = "Suggestion ${index + 1}: " + entity.suggestion,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-
-                    Text(
-                        text = "Translation ${index + 1}: " + entity.translation,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-
-                    HorizontalDivider()
-                }
-            }
-        }
-    }
-}
 
 @Composable
 private fun RestartButton(onRestartClicked: () -> Unit) {
@@ -474,7 +437,7 @@ private fun InputArea(
                     .focusRequester(focusRequester),
                 placeholder = { Text("Type a message...") },
                 enabled = isEnabled,
-                keyboardOptions = KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Send),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(onSend = { onSendClicked() }),
                 singleLine = true,
                 shape = RoundedCornerShape(AppDimension.radiusRound)

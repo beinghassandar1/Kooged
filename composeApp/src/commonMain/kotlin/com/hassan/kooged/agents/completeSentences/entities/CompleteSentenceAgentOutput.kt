@@ -1,4 +1,4 @@
-package com.hassan.kooged.agents.completeSentences
+package com.hassan.kooged.agents.completeSentences.entities
 
 import ai.koog.agents.core.tools.annotations.LLMDescription
 import kotlinx.serialization.SerialName
