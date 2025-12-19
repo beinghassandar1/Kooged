@@ -27,10 +27,18 @@ sealed class UiMessage {
     data class ResultMessage(val result: TestGeneratorAgentOutput) : UiMessage()
 }
 
+sealed interface TestGeneratorState {
+    data object Undefined : TestGeneratorState
+    data object Loading : TestGeneratorState
+    data class Error(val message: String) : TestGeneratorState
+    data class Result(val result: TestGeneratorAgentOutput) : TestGeneratorState
+}
+
 // Define UI state for the agent demo screen
 data class AgentDemoUiState(
     val title: String = "Agent Demo",
     val uiMessages: List<UiMessage> = listOf(UiMessage.SystemUiMessage("Hi, please start writing text")),
+    val state: TestGeneratorState = TestGeneratorState.Undefined,
     val inputText: String = "Hallo, ich bin",
     val isInputEnabled: Boolean = true,
     val isLoading: Boolean = false,
@@ -71,6 +79,7 @@ class TestGeneratorAgentViewModel(
             _uiState.update {
                 it.copy(
                     uiMessages = it.uiMessages + UiMessage.UserUiMessage(userInput),
+                    state = TestGeneratorState.Loading,
                     inputText = "",
                     isLoading = true,
                     userResponseRequested = false,
@@ -81,6 +90,7 @@ class TestGeneratorAgentViewModel(
             _uiState.update {
                 it.copy(
                     uiMessages = it.uiMessages + UiMessage.UserUiMessage(userInput),
+                    state = TestGeneratorState.Loading,
                     inputText = "",
                     isInputEnabled = false,
                     isLoading = true
@@ -170,6 +180,7 @@ class TestGeneratorAgentViewModel(
                                 UiMessage.ResultMessage(result) +
                                 UiMessage.SystemUiMessage("The agent has stopped."),
                         isInputEnabled = false,
+                        state = TestGeneratorState.Result(result),
                         isLoading = false,
                         isChatEnded = true
                     )

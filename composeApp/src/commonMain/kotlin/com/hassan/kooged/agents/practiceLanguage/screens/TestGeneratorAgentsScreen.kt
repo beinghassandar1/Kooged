@@ -1,14 +1,16 @@
 package com.hassan.kooged.agents.practiceLanguage.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,9 +21,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.hassan.kooged.agents.practiceLanguage.composables.GeneratedTestResult
 import com.hassan.kooged.agents.practiceLanguage.viewmodels.TestGeneratorAgentViewModel
+import com.hassan.kooged.agents.practiceLanguage.viewmodels.TestGeneratorState
 import com.hassan.kooged.agents.practiceLanguage.viewmodels.UiMessage
 import kooged.composeapp.generated.resources.Res
 import kooged.composeapp.generated.resources.outline_arrow_back_24
@@ -35,7 +40,9 @@ private fun Preview() {
     Content(
         goBack = {},
         onGenerateTestClicked = {},
-        messages = listOf()
+        messages = listOf(),
+        state = TestGeneratorState.Undefined,
+        onClearClicked = {}
     )
 }
 
@@ -47,10 +54,15 @@ fun TestGeneratorAgentsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val messages = uiState.uiMessages
+    val state = uiState.state
     Content(
         messages = messages,
+        state = state,
         onGenerateTestClicked = {
             viewModel.sendMessage()
+        },
+        onClearClicked = {
+            viewModel.restartChat()
         },
         goBack = goBack,
         modifier = modifier
@@ -62,6 +74,8 @@ fun TestGeneratorAgentsScreen(
 @Composable
 private fun Content(
     messages: List<UiMessage>,
+    state: TestGeneratorState,
+    onClearClicked: () -> Unit,
     onGenerateTestClicked: () -> Unit,
     goBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -92,65 +106,60 @@ private fun Content(
                     .padding(paddingValues)
                     .fillMaxSize()
             ) {
-                Button(
-                    content = {
-                        Text("Generate stuff")
-                    },
-                    onClick = {
-                        onGenerateTestClicked()
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                FlowRow {
+                    Button(
+                        content = {
+                            Text("Generate stuff")
+                        },
+                        onClick = {
+                            onGenerateTestClicked()
+                        },
+                        modifier = Modifier.wrapContentSize()
+                    )
+                    if (state is TestGeneratorState.Result || state is TestGeneratorState.Error) {
+                        Button(
+                            content = {
+                                Text("Clear")
+                            },
+                            onClick = {
+                                onClearClicked()
+                            },
+                            modifier = Modifier.wrapContentSize().padding(start = 16.dp)
+                        )
+                    }
+                }
 
 
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(messages) { message ->
-                        Column {
-                            Text(
-                                text = message.toString(),
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                            when (message) {
-                                is UiMessage.AgentUiMessage -> {
-                                    Text(message.text)
-                                }
+                when (state) {
+                    is TestGeneratorState.Error -> {
+                        Text(
+                            text = state.message,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
 
-                                is UiMessage.ErrorUiMessage -> {
-
-                                    Text(message.text)
-
-                                }
-
-                                is UiMessage.ResultMessage -> {
-                                    message.result.exercises.forEach { item ->
-                                        Text(text = item.toString())
-
-                                    }
-
-                                }
-
-                                is UiMessage.SystemUiMessage -> {
-
-                                    Text(message.text)
-
-                                }
-
-                                is UiMessage.ToolCallUiMessage -> {
-
-                                    Text(message.text)
-
-                                }
-
-                                is UiMessage.UserUiMessage -> {
-
-                                    Text(message.text)
-
-                                }
-                            }
-
+                    TestGeneratorState.Loading -> {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                         }
                     }
 
+                    TestGeneratorState.Undefined -> {
+                        Text(
+                            text = "Undefined",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+
+                    is TestGeneratorState.Result -> {
+                        GeneratedTestResult(
+                            data = state.result
+                        )
+                    }
                 }
 
             }
