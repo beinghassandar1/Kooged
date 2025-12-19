@@ -23,7 +23,7 @@ import org.koin.ext.getFullName
 private fun buildPrompt(
     learningLanguage: String = LanguageConstants.LEARNING_LANGUAGE,
     nativeFluentLanguage: String = LanguageConstants.FLUENT_LANGUAGE,
-    examplesCount: Int,
+    examplesCount: Int = 20,
 ): String {
     val sampleOutput = TestGeneratorAgentOutput(
         exercises = listOf(
