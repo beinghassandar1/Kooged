@@ -21,6 +21,25 @@ private fun buildPrompt(
     learningLanguage: String = LanguageConstants.LEARNING_LANGUAGE,
     nativeFluentLanguage: String = LanguageConstants.FLUENT_LANGUAGE
 ): String {
+    val sampleOutput = CompleteSentenceAgentOutput(
+        suggestions = listOf(
+            SentenceSuggestionOutputEntity(
+                suggestion = "example suggestion in learning language",
+                translation = "example translation in fluent language"
+            )
+        )
+    )
+
+    val json = Json {
+        prettyPrint = true
+        ignoreUnknownKeys = true
+    }
+    val jsonFormat = json.encodeToString(
+        CompleteSentenceAgentOutput.serializer(),
+        sampleOutput
+    )
+
+
     return """
     You are a helpful language assistant.
     User is a learning $learningLanguage language and is fluent in $nativeFluentLanguage. 
@@ -28,14 +47,7 @@ private fun buildPrompt(
     Try to complete the sentence and provide at least 3 suggestions. 
     The provided suggestions should be in learning languages with translation in fluent Language.
     The only output should be in the following format:
-    {
-        "suggestions": [
-            {
-            "suggestion": "",
-            "translation": "",
-            }
-        ]
-    }
+    $jsonFormat
     """
 }
 
@@ -66,6 +78,7 @@ internal class CompleteSentenceAgentProviderImpl(
                 val json = Json {
                     ignoreUnknownKeys = true
                 }
+                println(jsonString)
                 json.decodeFromString<CompleteSentenceAgentOutput>(jsonString)
             }
 
