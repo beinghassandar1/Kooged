@@ -1,6 +1,6 @@
 package com.hassan.kooged.agents.practiceLanguage.utils
 
-import com.hassan.kooged.agents.practiceLanguage.entities.Message
+import com.hassan.kooged.agents.practiceLanguage.entities.MessageItem
 import kotlinx.serialization.json.Json
 
 object UserMessagesUtils {
@@ -437,9 +437,9 @@ object UserMessagesUtils {
     /**
      * Parses the userMessagesJson and returns a list of Message entities
      */
-    fun getMessages(): List<Message> {
+    fun getMessages(): List<MessageItem> {
         return try {
-            json.decodeFromString<List<Message>>(userMessagesJson)
+            json.decodeFromString<List<MessageItem>>(userMessagesJson)
         } catch (e: Exception) {
             println("Error parsing messages: ${e.message}")
             emptyList()

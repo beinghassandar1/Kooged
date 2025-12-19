@@ -41,10 +41,21 @@ private fun Content(
                 item {
                     Button(
                         content = {
-                            Text(text = "Simple Agent")
+                            Text(text = "Complete Sentence Agent")
                         },
                         onClick = {
                             goToScreen(Route.SimpleAgent)
+                        }
+                    )
+                }
+
+                item {
+                    Button(
+                        content = {
+                            Text(text = "Test Generator Agent")
+                        },
+                        onClick = {
+                            goToScreen(Route.TestGeneratorAgent)
                         }
                     )
                 }

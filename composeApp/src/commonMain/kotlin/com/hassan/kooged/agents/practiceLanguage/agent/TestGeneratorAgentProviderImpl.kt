@@ -4,13 +4,12 @@ import ai.koog.agents.core.agent.AIAgent
 import ai.koog.agents.core.agent.config.AIAgentConfig
 import ai.koog.agents.core.dsl.builder.forwardTo
 import ai.koog.agents.core.dsl.builder.strategy
-import ai.koog.agents.core.dsl.extension.nodeLLMRequestStructured
+import ai.koog.agents.core.dsl.extension.nodeLLMRequestMultiple
+import ai.koog.agents.core.dsl.extension.onAssistantMessage
 import ai.koog.agents.core.tools.ToolRegistry
 import ai.koog.agents.features.eventHandler.feature.handleEvents
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.llms.SingleLLMPromptExecutor
-import ai.koog.prompt.llm.OllamaModels
-import ai.koog.prompt.structure.StructureFixingParser
 import ai.koog.prompt.text.text
 import com.hassan.kooged.agents.practiceLanguage.entities.TestGeneratorAgentInput
 import com.hassan.kooged.agents.practiceLanguage.entities.TestGeneratorAgentOutput
@@ -18,11 +17,13 @@ import com.hassan.kooged.agents.practiceLanguage.entities.TestGeneratorQuestions
 import com.hassan.kooged.models.LlmContext
 import com.hassan.kooged.utils.LanguageConstants
 import kotlinx.serialization.json.Json
+import org.koin.ext.getFullName
 
 
 private fun buildPrompt(
     learningLanguage: String = LanguageConstants.LEARNING_LANGUAGE,
-    nativeFluentLanguage: String = LanguageConstants.FLUENT_LANGUAGE
+    nativeFluentLanguage: String = LanguageConstants.FLUENT_LANGUAGE,
+    examplesCount: Int,
 ): String {
     val sampleOutput = TestGeneratorAgentOutput(
         exercises = listOf(
@@ -79,10 +80,10 @@ private fun buildPrompt(
     You are a helpful language learning test generator.
     User is learning $learningLanguage language and is fluent in $nativeFluentLanguage. 
     You will be provided with conversation messages between the user and their language learning partner.
-    Generate diverse practice exercises based on the conversation to help the user practice and reinforce what they've learned.
+    Generate exactly $examplesCount diverse practice exercises based on the conversation to help the user practice and reinforce what they've learned.
     Create a variety of question types including: yes/no questions, multiple choice, fill in the blank, matching, translation, sentence ordering, and open-ended questions.
     The exercises should be in $learningLanguage with explanations/translations in $nativeFluentLanguage when appropriate.
-    Only provide the exercises in JSON format following this structure:
+    Only provide the exercises in JSON format which we will parse with kotlin serialization following this structure:
     $jsonFormat
     """
 }
@@ -105,44 +106,99 @@ internal class TestGeneratorAgentProviderImpl(
         // Create empty tool registry - no tools needed for this agent
         val toolRegistry = ToolRegistry.Companion { }
 
+        /*
+
+                val agentStrategy =
+                    strategy<TestGeneratorAgentInput, TestGeneratorAgentOutput>("test-generator") {
+                        val prepareRequest by node<TestGeneratorAgentInput, String> { request ->
+                            text {
+                                +"Generating practice exercises based on conversation"
+                                +"Number of messages: ${request.messageItems.size}"
+                                +""
+                                +"Conversation messages:"
+                                request.messageItems.forEach { message ->
+                                    +"${message.direction}: ${message.message}"
+                                }
+                            }
+
+                        }
+
+                        // Node to parse the LLM response into CompleteSentenceAgentOutput
+                        val getStructuredOutput by node<String, TestGeneratorAgentOutput> { jsonString ->
+                            // Parse the JSON string into CompleteSentenceAgentOutput
+                            val json = Json {
+                                ignoreUnknownKeys = true
+                            }
+                            println(jsonString)
+                            json.decodeFromString<TestGeneratorAgentOutput>(jsonString)
+                        }
+
+
+        //             Simple API, let it figure out the optimal approach to get structured output itself.
+        //             So only the structure has to be supplied.
+                        val getStructuredOutput by nodeLLMRequestStructured<TestGeneratorAgentOutput>(
+        //                 Optional: If the model you are using does not support native structured output, you can provide examples to help
+        //                 it better understand the format.
+                            examples = listOf(),
+        //                 Optional: If the model provides inaccurate structure leading to serialization exceptions, you can try fixing
+        //                 parser to attempt to fix malformed output.
+                            fixingParser = StructureFixingParser(
+                                fixingModel = OllamaModels.Alibaba.QWEN_3_06B,
+                                retries = 2,
+                            )
+                        )
+
+                        nodeStart then prepareRequest then getStructuredOutput
+                        edge(getStructuredOutput forwardTo nodeFinish transformed { it })
+                    }
+        */
 
         val agentStrategy =
-            strategy<TestGeneratorAgentInput, TestGeneratorAgentOutput>("test-generator") {
+            strategy<TestGeneratorAgentInput, TestGeneratorAgentOutput>(TestGeneratorAgentProvider::class.getFullName()) {
                 val prepareRequest by node<TestGeneratorAgentInput, String> { request ->
                     text {
                         +"Generating practice exercises based on conversation"
-                        +"Number of messages: ${request.messages.size}"
+                        +"Number of messages: ${request.messageItems.size}"
                         +""
                         +"Conversation messages:"
-                        request.messages.forEach { message ->
+                        request.messageItems.forEach { message ->
                             +"${message.direction}: ${message.message}"
                         }
                     }
 
                 }
 
-                /*
-             Simple API, let it figure out the optimal approach to get structured output itself.
-             So only the structure has to be supplied.
-                 */
-                val getStructuredOutput by nodeLLMRequestStructured<TestGeneratorAgentOutput>(
-                    /*
-                 Optional: If the model you are using does not support native structured output, you can provide examples to help
-                 it better understand the format.
-                     */
-                    examples = listOf(),
-                    /*
-                 Optional: If the model provides inaccurate structure leading to serialization exceptions, you can try fixing
-                 parser to attempt to fix malformed output.
-                     */
-                    fixingParser = StructureFixingParser(
-                        fixingModel = OllamaModels.Alibaba.QWEN_3_06B,
-                        retries = 2
-                    )
+                // Node to request LLM response
+                val nodeRequestLLM by nodeLLMRequestMultiple()
+
+                // Node to parse the LLM response into CompleteSentenceAgentOutput
+                val nodeParseOutput by node<String, TestGeneratorAgentOutput> { jsonString ->
+                    // Parse the JSON string into CompleteSentenceAgentOutput
+                    val json = Json {
+                        ignoreUnknownKeys = true
+                    }
+                    val cleanJson = jsonString
+                        .trim()
+                        .removePrefix("```json")
+                        .removePrefix("```")
+                        .removeSuffix("```")
+                        .trim()
+                    println(cleanJson)
+                    json.decodeFromString<TestGeneratorAgentOutput>(cleanJson)
+                }
+
+                // Flow: Start -> Request LLM -> Parse output -> Finish
+                // The initial user input (String) is automatically added as a user message
+                edge(nodeStart forwardTo prepareRequest)
+                edge(prepareRequest forwardTo nodeRequestLLM)
+
+                edge(
+                    nodeRequestLLM forwardTo nodeParseOutput
+                            transformed { it.first() }
+                            onAssistantMessage { true }
                 )
 
-                nodeStart then prepareRequest then getStructuredOutput
-                edge(getStructuredOutput forwardTo nodeFinish transformed { it.getOrThrow().structure })
+                edge(nodeParseOutput forwardTo nodeFinish)
             }
 
 

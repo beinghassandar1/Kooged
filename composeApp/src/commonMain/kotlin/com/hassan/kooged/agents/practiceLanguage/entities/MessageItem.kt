@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("message")
 @LLMDescription("A message in a conversation with direction (incoming/outgoing), text content, and timestamp")
-data class Message(
+data class MessageItem(
     @SerialName("direction")
     @property:LLMDescription("Direction of the message: 'incoming' for received messages or 'outgoing' for sent messages")
     val direction: MessageDirection,

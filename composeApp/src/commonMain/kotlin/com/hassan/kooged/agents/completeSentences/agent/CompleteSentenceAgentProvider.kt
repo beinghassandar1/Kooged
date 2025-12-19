@@ -1,8 +1,7 @@
 package com.hassan.kooged.agents.completeSentences.agent
 
 import ai.koog.agents.core.agent.AIAgent
-import com.hassan.kooged.agents.practiceLanguage.entities.TestGeneratorAgentInput
-import com.hassan.kooged.agents.practiceLanguage.entities.TestGeneratorAgentOutput
+import com.hassan.kooged.agents.completeSentences.entities.CompleteSentenceAgentOutput
 
 interface CompleteSentenceAgentProvider {
 
@@ -16,5 +15,5 @@ interface CompleteSentenceAgentProvider {
         onToolCallEvent: suspend (String) -> Unit,
         onErrorEvent: suspend (String) -> Unit,
         onAssistantMessage: suspend (String) -> String
-    ): AIAgent<TestGeneratorAgentInput, TestGeneratorAgentOutput>
+    ): AIAgent<String, CompleteSentenceAgentOutput>
 }

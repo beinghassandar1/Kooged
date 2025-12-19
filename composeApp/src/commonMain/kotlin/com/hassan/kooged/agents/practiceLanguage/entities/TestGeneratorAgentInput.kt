@@ -8,5 +8,5 @@ import kotlinx.serialization.SerialName
 data class TestGeneratorAgentInput(
     @SerialName("messages")
     @property:LLMDescription("List of messages in the conversation")
-    val messages: List<Message>
+    val messageItems: List<MessageItem>
 )
