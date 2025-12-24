@@ -17,4 +17,8 @@ interface TestGeneratorAgentProvider {
         onErrorEvent: suspend (String) -> Unit,
         onAssistantMessage: suspend (String) -> String
     ): AIAgent<TestGeneratorAgentInput, TestGeneratorAgentOutput>
+
+    suspend fun executeTest(
+        inputData: TestGeneratorAgentInput,
+    ): TestGeneratorResult
 }

@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import com.hassan.kooged.agents.practiceLanguage.composables.GeneratedTestResult
 import com.hassan.kooged.agents.practiceLanguage.viewmodels.TestGeneratorAgentViewModel
 import com.hassan.kooged.agents.practiceLanguage.viewmodels.TestGeneratorState
-import com.hassan.kooged.agents.practiceLanguage.viewmodels.UiMessage
 import kooged.composeapp.generated.resources.Res
 import kooged.composeapp.generated.resources.outline_arrow_back_24
 import org.jetbrains.compose.resources.painterResource
@@ -40,7 +39,6 @@ private fun Preview() {
     Content(
         goBack = {},
         onGenerateTestClicked = {},
-        messages = listOf(),
         state = TestGeneratorState.Undefined,
         onClearClicked = {}
     )
@@ -53,13 +51,11 @@ fun TestGeneratorAgentsScreen(
     goBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val messages = uiState.uiMessages
     val state = uiState.state
     Content(
-        messages = messages,
         state = state,
         onGenerateTestClicked = {
-            viewModel.sendMessage()
+            viewModel.generateStuff()
         },
         onClearClicked = {
             viewModel.restartChat()
@@ -73,7 +69,6 @@ fun TestGeneratorAgentsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Content(
-    messages: List<UiMessage>,
     state: TestGeneratorState,
     onClearClicked: () -> Unit,
     onGenerateTestClicked: () -> Unit,

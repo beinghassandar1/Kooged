@@ -2,6 +2,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -14,8 +15,6 @@ plugins {
 
 kotlin {
     jvmToolchain(libs.versions.javaVersion.get().toInt())
-
-    android
 
     androidTarget {
         compilerOptions {
@@ -99,6 +98,10 @@ android {
     namespace = "com.hassan.kooged"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.hassan.kooged"
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -111,6 +114,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "/META-INF/INDEX.LIST"
             excludes += "/META-INF/io.netty.versions.properties"
+            excludes += "/META-INF/DEPENDENCIES"
 
         }
     }

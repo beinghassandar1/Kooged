@@ -46,7 +46,7 @@ internal class AgentModule {
         agentContextHelper: AgentContextHelper,
     ) =
         CompleteSentenceAgentProviderImpl(
-            llmContext = agentContextHelper.getOllamaQwen06Client(),
+            llmContext = agentContextHelper.getGeminiFlash205Client(),
         )
 
 
@@ -60,7 +60,7 @@ internal class AgentModule {
         agentContextHelper: AgentContextHelper,
     ) =
         TestGeneratorAgentProviderImpl(
-            llmContext = agentContextHelper.getOllamaQwen06Client(),
+            llmContext = agentContextHelper.getGeminiFlash205Client(),
         )
 
 

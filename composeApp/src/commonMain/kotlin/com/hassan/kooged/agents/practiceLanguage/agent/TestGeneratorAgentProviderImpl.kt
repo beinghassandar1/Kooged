@@ -10,7 +10,9 @@ import ai.koog.agents.core.tools.ToolRegistry
 import ai.koog.agents.features.eventHandler.feature.handleEvents
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.llms.SingleLLMPromptExecutor
+import ai.koog.prompt.structure.executeStructured
 import ai.koog.prompt.text.text
+import com.hassan.kooged.agents.practiceLanguage.entities.QuestionType
 import com.hassan.kooged.agents.practiceLanguage.entities.TestGeneratorAgentInput
 import com.hassan.kooged.agents.practiceLanguage.entities.TestGeneratorAgentOutput
 import com.hassan.kooged.agents.practiceLanguage.entities.TestGeneratorQuestionsEntity
@@ -25,56 +27,6 @@ private fun buildPrompt(
     nativeFluentLanguage: String = LanguageConstants.FLUENT_LANGUAGE,
     examplesCount: Int = 20,
 ): String {
-    val sampleOutput = TestGeneratorAgentOutput(
-        exercises = listOf(
-            TestGeneratorQuestionsEntity.YesNoQuestion(
-                question = "Is 'Hola' a greeting in Spanish?",
-                answer = true
-            ),
-            TestGeneratorQuestionsEntity.MultipleChoiceQuestion(
-                question = "What does 'Guten Morgen' mean in English?",
-                options = listOf("Good evening", "Good morning", "Good night", "Good afternoon"),
-                correctAnswerIndex = 1
-            ),
-            TestGeneratorQuestionsEntity.FillInTheBlankQuestion(
-                question = "Je _____ français. (I speak French)",
-                correctAnswer = "parle"
-            ),
-            TestGeneratorQuestionsEntity.MatchingQuestion(
-                question = "Match the Spanish greetings with their English translations",
-                pairs = mapOf(
-                    "Buenos días" to "Good morning",
-                    "Buenas tardes" to "Good afternoon",
-                    "Buenas noches" to "Good night"
-                )
-            ),
-            TestGeneratorQuestionsEntity.TranslationQuestion(
-                question = "How are you?",
-                fromLanguage = "English",
-                toLanguage = "German",
-                correctAnswer = "Wie geht es dir?"
-            ),
-            TestGeneratorQuestionsEntity.SentenceOrderingQuestion(
-                question = "Put the words in the correct order to form a sentence",
-                shuffledWords = listOf("ich", "Deutsch", "spreche"),
-                correctOrder = listOf(0, 2, 1)
-            ),
-            TestGeneratorQuestionsEntity.OpenEndedQuestion(
-                question = "Write a short paragraph introducing yourself in Spanish",
-                sampleAnswer = "Hola, me llamo Juan. Tengo veinte años y vivo en Madrid. Me gusta aprender idiomas."
-            )
-        )
-    )
-
-    val json = Json {
-        prettyPrint = true
-        ignoreUnknownKeys = true
-    }
-    val jsonFormat = json.encodeToString(
-        TestGeneratorAgentOutput.serializer(),
-        sampleOutput
-    )
-
 
     return """
     You are a helpful language learning test generator.
@@ -83,8 +35,6 @@ private fun buildPrompt(
     Generate exactly $examplesCount diverse practice exercises based on the conversation to help the user practice and reinforce what they've learned.
     Create a variety of question types including: yes/no questions, multiple choice, fill in the blank, matching, translation, sentence ordering, and open-ended questions.
     The exercises should be in $learningLanguage with explanations/translations in $nativeFluentLanguage when appropriate.
-    Only provide the exercises in JSON format which we will parse with kotlin serialization following this structure:
-    $jsonFormat
     """
 }
 
@@ -235,5 +185,123 @@ internal class TestGeneratorAgentProviderImpl(
             }
         }
         return agent
+    }
+
+    override suspend fun executeTest(
+        inputData: TestGeneratorAgentInput,
+    ): TestGeneratorResult {
+
+        val executor = SingleLLMPromptExecutor(llmClient = llmContext.llmClient)
+
+        val result = executor.executeStructured<TestGeneratorAgentOutput>(
+            prompt = prompt("prompt") {
+                system(
+                    content = buildPrompt()
+                )
+                user {
+                    +"Generating practice exercises based on conversation"
+                    +"Number of messages: ${inputData.messageItems.size}"
+                    +""
+                    +"Conversation messages:"
+                    inputData.messageItems.forEach { message ->
+                        +"${message.direction}: ${message.message}"
+                    }
+                }
+
+            },
+
+            model = llmContext.llmModel,
+        )
+
+        if (result.isFailure) {
+            return TestGeneratorResult.Error(result.exceptionOrNull()?.message ?: "Error occurred")
+        } else if (result.isSuccess) {
+            val output = result.getOrThrow()
+            val mappedList = mapTestGeneratorAgentOutputToData(output.structure)
+            return TestGeneratorResult.Success(mappedList)
+        } else {
+            return TestGeneratorResult.Error("Something happened")
+        }
+    }
+}
+
+sealed interface TestGeneratorResult {
+    data class Error(val message: String) : TestGeneratorResult
+    data class Success(val data: List<TestGeneratorQuestionsEntity>) : TestGeneratorResult
+}
+
+private fun mapTestGeneratorAgentOutputToData(output: TestGeneratorAgentOutput): List<TestGeneratorQuestionsEntity> {
+    return output.exercises.mapNotNull { apiQuestion ->
+        when (apiQuestion.type) {
+            QuestionType.YES_NO -> {
+                apiQuestion.isAnswerTrue?.let { answer ->
+                    TestGeneratorQuestionsEntity.YesNoQuestion(
+                        question = apiQuestion.question,
+                        answer = answer
+                    )
+                }
+            }
+
+            QuestionType.MULTIPLE_CHOICE -> {
+                if (apiQuestion.options != null && apiQuestion.correctOptionIndex != null) {
+                    TestGeneratorQuestionsEntity.MultipleChoiceQuestion(
+                        question = apiQuestion.question,
+                        options = apiQuestion.options,
+                        correctAnswerIndex = apiQuestion.correctOptionIndex
+                    )
+                } else null
+            }
+
+            QuestionType.FILL_IN_THE_BLANK -> {
+                apiQuestion.correctAnswerText?.let { answer ->
+                    TestGeneratorQuestionsEntity.FillInTheBlankQuestion(
+                        question = apiQuestion.question,
+                        correctAnswer = answer
+                    )
+                }
+            }
+
+            QuestionType.MATCHING -> {
+                apiQuestion.matchingPairs?.let { pairs ->
+                    TestGeneratorQuestionsEntity.MatchingQuestion(
+                        question = apiQuestion.question,
+                        pairs = pairs
+                    )
+                }
+            }
+
+            QuestionType.TRANSLATION -> {
+                if (apiQuestion.fromLanguage != null &&
+                    apiQuestion.toLanguage != null &&
+                    apiQuestion.correctAnswerText != null
+                ) {
+                    TestGeneratorQuestionsEntity.TranslationQuestion(
+                        question = apiQuestion.question,
+                        fromLanguage = apiQuestion.fromLanguage,
+                        toLanguage = apiQuestion.toLanguage,
+                        correctAnswer = apiQuestion.correctAnswerText
+                    )
+                } else null
+            }
+
+            QuestionType.SENTENCE_ORDERING -> {
+                if (apiQuestion.options != null && apiQuestion.correctOrderIndices != null) {
+                    TestGeneratorQuestionsEntity.SentenceOrderingQuestion(
+                        question = apiQuestion.question,
+                        shuffledWords = apiQuestion.options,
+                        correctOrder = apiQuestion.correctOrderIndices
+                    )
+                } else null
+            }
+
+            QuestionType.OPEN_ENDED -> {
+                apiQuestion.sampleAnswer?.let { sample ->
+                    TestGeneratorQuestionsEntity.OpenEndedQuestion(
+                        question = apiQuestion.question,
+                        sampleAnswer = sample
+                    )
+                }
+            }
+        }
     }
 }

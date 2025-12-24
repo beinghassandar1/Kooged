@@ -10,5 +10,5 @@ import kotlinx.serialization.Serializable
 data class TestGeneratorAgentOutput(
     @property:LLMDescription("List of question and answers for language practice")
     @SerialName("exercises")
-    val exercises: List<TestGeneratorQuestionsEntity>
+    val exercises: List<TestGeneratorQuestionApi>
 )
