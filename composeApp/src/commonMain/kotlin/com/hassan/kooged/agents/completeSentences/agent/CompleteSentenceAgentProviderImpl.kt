@@ -118,7 +118,7 @@ internal class CompleteSentenceAgentProviderImpl(
         ) {
             handleEvents {
                 onToolCallStarting { ctx ->
-                    onToolCallEvent("Tool ${ctx.tool.name}, args ${ctx.toolArgs}")
+                    onToolCallEvent("Tool ${ctx.toolName}, args ${ctx.toolArgs}")
                 }
 
                 onAgentExecutionFailed { ctx ->

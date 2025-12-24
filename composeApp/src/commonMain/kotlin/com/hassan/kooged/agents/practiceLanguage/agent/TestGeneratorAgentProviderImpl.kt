@@ -172,7 +172,7 @@ internal class TestGeneratorAgentProviderImpl(
         ) {
             handleEvents {
                 onToolCallStarting { ctx ->
-                    onToolCallEvent("Tool ${ctx.tool.name}, args ${ctx.toolArgs}")
+                    onToolCallEvent("Tool ${ctx.toolName}, args ${ctx.toolArgs}")
                 }
 
                 onAgentExecutionFailed { ctx ->
@@ -217,7 +217,7 @@ internal class TestGeneratorAgentProviderImpl(
             return TestGeneratorResult.Error(result.exceptionOrNull()?.message ?: "Error occurred")
         } else if (result.isSuccess) {
             val output = result.getOrThrow()
-            val mappedList = mapTestGeneratorAgentOutputToData(output.structure)
+            val mappedList = mapTestGeneratorAgentOutputToData(output.data)
             return TestGeneratorResult.Success(mappedList)
         } else {
             return TestGeneratorResult.Error("Something happened")

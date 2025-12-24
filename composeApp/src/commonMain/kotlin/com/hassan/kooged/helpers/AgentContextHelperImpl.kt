@@ -71,7 +71,7 @@ class AgentContextHelperImpl : AgentContextHelper {
         )
 
         return LlmContext(
-            llmClient = GoogleLLMClient(apiKey = Build.GOOGLE_API_KEY),
+            llmClient = GoogleLLMClient(apiKey = ""),
             llmModel = Gemini3_Flash
         )
     }
