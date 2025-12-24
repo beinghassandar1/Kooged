@@ -11,6 +11,7 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.hassan.kooged.agents.completeSentences.screens.CompleteSentenceAgentsScreen
 import com.hassan.kooged.agents.practiceLanguage.screens.TestGeneratorAgentsScreen
+import com.hassan.kooged.agents.textModeration.screens.TextModerationAgentScreen
 import com.hassan.kooged.screens.MainScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -59,7 +60,13 @@ fun NavigationRoot(
                         rootBackStack.removeLastOrNull()
                     }
                 )
-
+            }
+            entry<Route.TextModerationAgent> {
+                TextModerationAgentScreen(
+                    goBack = {
+                        rootBackStack.removeLastOrNull()
+                    }
+                )
             }
         }
     )

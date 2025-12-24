@@ -14,4 +14,7 @@ sealed interface Route : NavKey {
 
     @Serializable
     data object TestGeneratorAgent : Route
+
+    @Serializable
+    data object TextModerationAgent : Route
 }

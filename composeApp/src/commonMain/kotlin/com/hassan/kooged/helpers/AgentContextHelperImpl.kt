@@ -24,6 +24,13 @@ class AgentContextHelperImpl : AgentContextHelper {
         )
     }
 
+    override fun getLlamaGuard3ModerationClient(): LlmContext {
+        return LlmContext(
+            llmClient = OllamaClient(),
+            llmModel = OllamaModels.Meta.LLAMA_GUARD_3
+        )
+    }
+
     override fun getGeminiFlash205Client(): LlmContext {
         /**
          * Basic capabilities shared across all Gemini models
