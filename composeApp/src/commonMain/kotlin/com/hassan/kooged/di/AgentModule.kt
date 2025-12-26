@@ -23,7 +23,7 @@ internal class AgentModule {
         agentContextHelper: AgentContextHelper,
     ) =
         CompleteSentenceAgentProviderImpl(
-            llmContext = agentContextHelper.getGeminiFlash205Client(),
+            llmContext = agentContextHelper.getGemini3FlashClient(),
         )
 
 
@@ -37,7 +37,7 @@ internal class AgentModule {
         agentContextHelper: AgentContextHelper,
     ) =
         TestGeneratorAgentProviderImpl(
-            llmContext = agentContextHelper.getGeminiFlash205Client(),
+            llmContext = agentContextHelper.getGemini3FlashClient(),
         )
 
 

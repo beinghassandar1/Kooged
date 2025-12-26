@@ -1,5 +1,6 @@
 package com.hassan.kooged.di
 
+import com.hassan.kooged.agents.imageModeration.di.imageModerationModule
 import com.hassan.kooged.agents.textModeration.di.textModerationModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
@@ -11,7 +12,8 @@ fun initKoin(config: KoinAppDeclaration? = null) {
 
         modules(
             AgentModule().module,
-            textModerationModule
+            textModerationModule,
+            imageModerationModule,
         )
     }
 }

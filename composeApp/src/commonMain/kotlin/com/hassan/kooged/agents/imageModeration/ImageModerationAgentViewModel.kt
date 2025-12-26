@@ -1,9 +1,9 @@
-package com.hassan.kooged.agents.textModeration
+package com.hassan.kooged.agents.imageModeration
 
 import ai.koog.prompt.dsl.ModerationResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hassan.kooged.agents.textModeration.agent.TextModerationAgentProvider
+import com.hassan.kooged.agents.imageModeration.agent.ImageModerationAgentProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,43 +12,43 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-sealed interface TextModerationState {
-    data object Undefined : TextModerationState
-    data object Loading : TextModerationState
-    data class Error(val message: String) : TextModerationState
-    data class Result(val result: ModerationResult) : TextModerationState
+sealed interface ImageModerationState {
+    data object Undefined : ImageModerationState
+    data object Loading : ImageModerationState
+    data class Error(val message: String) : ImageModerationState
+    data class Result(val result: ModerationResult) : ImageModerationState
 }
 
 // Define UI state for the agent demo screen
-data class TextModerationUiState(
-    val title: String = "Text Moderation",
-    val state: TextModerationState = TextModerationState.Undefined,
-    val inputText: String = "",
+data class ImageModerationUiState(
+    val title: String = "Image Moderation",
+    val state: ImageModerationState = ImageModerationState.Undefined,
+    val url: String = "",
 )
 
 
-class TextModerationAgentViewModel(
-    private val agentProvider: TextModerationAgentProvider
+class ImageModerationAgentViewModel(
+    private val agentProvider: ImageModerationAgentProvider
 ) : ViewModel() {
 
     // UI state
     private val _uiState = MutableStateFlow(
-        TextModerationUiState(
+        ImageModerationUiState(
             title = agentProvider.title,
         )
     )
-    val uiState: StateFlow<TextModerationUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<ImageModerationUiState> = _uiState.asStateFlow()
 
     // Send user message and start agent processing
     fun checkInput() {
-        val input = _uiState.value.inputText
+        val input = _uiState.value.url
         if (input.isEmpty()) {
             return
         }
 
         _uiState.update {
             it.copy(
-                state = TextModerationState.Loading,
+                state = ImageModerationState.Loading,
             )
         }
 
@@ -58,21 +58,22 @@ class TextModerationAgentViewModel(
     }
 
     // Run the agent
-    private suspend fun runAgent(input: String) {
+    private suspend fun runAgent(imageUrl: String) {
         withContext(Dispatchers.Default) {
+
             try {
                 val result = agentProvider.executeAgent(
-                    input = input
+                    imageUrl = imageUrl
                 )
                 _uiState.update {
                     it.copy(
-                        state = TextModerationState.Result(result)
+                        state = ImageModerationState.Result(result)
                     )
                 }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
-                        state = TextModerationState.Error(e.message ?: "Unknown Error")
+                        state = ImageModerationState.Error(e.message ?: "Unknown Error")
                     )
                 }
             }
@@ -85,9 +86,9 @@ class TextModerationAgentViewModel(
     // Restart the chat
     fun restartChat() {
         _uiState.update {
-            TextModerationUiState(
+            ImageModerationUiState(
                 title = agentProvider.title,
-                state = TextModerationState.Undefined
+                state = ImageModerationState.Undefined
             )
         }
     }
@@ -95,7 +96,7 @@ class TextModerationAgentViewModel(
     fun onTextUpdate(text: String) {
         _uiState.update {
             it.copy(
-                inputText = text
+                url = text
             )
         }
     }

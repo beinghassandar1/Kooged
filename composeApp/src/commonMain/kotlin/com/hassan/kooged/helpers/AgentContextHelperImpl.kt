@@ -1,6 +1,8 @@
 package com.hassan.kooged.helpers
 
 import ai.koog.prompt.executor.clients.google.GoogleLLMClient
+import ai.koog.prompt.executor.clients.openai.OpenAILLMClient
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
 import ai.koog.prompt.executor.ollama.client.OllamaClient
 import ai.koog.prompt.llm.LLMCapability
 import ai.koog.prompt.llm.LLMProvider
@@ -32,7 +34,15 @@ class AgentContextHelperImpl : AgentContextHelper {
         )
     }
 
-    override fun getGeminiFlash205Client(): LlmContext {
+    override fun getOpenAiOmniModerationClient(): LlmContext {
+        return LlmContext(
+            llmClient = OpenAILLMClient(apiKey = BuildConfig.OPEN_AI_API_KEY),
+            llmModel = OpenAIModels.Moderation.Omni
+        )
+    }
+
+
+    override fun getGemini3FlashClient(): LlmContext {
         /**
          * Basic capabilities shared across all Gemini models
          */

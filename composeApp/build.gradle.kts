@@ -26,6 +26,9 @@ buildConfig {
 
     val googleApiKey = localProperties.getProperty("GOOGLE_API_KEY")
     buildConfigField("GOOGLE_API_KEY", googleApiKey)
+
+    val openAiApiKey = localProperties.getProperty("OPEN_AI_API_KEY")
+    buildConfigField("OPEN_AI_API_KEY", openAiApiKey)
 }
 kotlin {
     jvmToolchain(libs.versions.javaVersion.get().toInt())
@@ -83,6 +86,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.serialization.json)
             api(libs.koin.annotations)
+
 
             implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.jetbrains.lifecycle.viewmodel)

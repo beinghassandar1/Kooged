@@ -71,6 +71,17 @@ private fun Content(
                     )
                 }
 
+                item {
+                    Button(
+                        content = {
+                            Text(text = "Image Moderation Agent")
+                        },
+                        onClick = {
+                            goToScreen(Route.ImageModerationAgent)
+                        }
+                    )
+                }
+
             }
         }
     )
