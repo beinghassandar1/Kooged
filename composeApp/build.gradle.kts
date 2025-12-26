@@ -12,7 +12,7 @@ plugins {
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
-    id("com.github.gmazzo.buildconfig") version "6.0.7"
+    alias(libs.plugins.build.config)
 }
 
 val localProperties = Properties()
