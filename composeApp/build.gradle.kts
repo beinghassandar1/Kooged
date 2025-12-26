@@ -1,6 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 
 plugins {
@@ -11,8 +12,21 @@ plugins {
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
+    id("com.github.gmazzo.buildconfig") version "6.0.7"
 }
 
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
+buildConfig {
+    packageName("com.hassan.kooged")
+
+    val googleApiKey = localProperties.getProperty("GOOGLE_API_KEY")
+    buildConfigField("GOOGLE_API_KEY", googleApiKey)
+}
 kotlin {
     jvmToolchain(libs.versions.javaVersion.get().toInt())
 
@@ -73,6 +87,7 @@ kotlin {
             implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.jetbrains.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodel.nav3)
+            implementation(libs.kermit)
 
         }
         commonTest.dependencies {

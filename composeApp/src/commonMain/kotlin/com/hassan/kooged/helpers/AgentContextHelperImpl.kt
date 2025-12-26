@@ -6,6 +6,7 @@ import ai.koog.prompt.llm.LLMCapability
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
 import ai.koog.prompt.llm.OllamaModels
+import com.hassan.kooged.BuildConfig
 import com.hassan.kooged.models.LlmContext
 
 class AgentContextHelperImpl : AgentContextHelper {
@@ -76,9 +77,8 @@ class AgentContextHelperImpl : AgentContextHelper {
             contextLength = 1_048_576,
             maxOutputTokens = 65_536,
         )
-
         return LlmContext(
-            llmClient = GoogleLLMClient(apiKey = ""),
+            llmClient = GoogleLLMClient(apiKey = BuildConfig.GOOGLE_API_KEY),
             llmModel = Gemini3_Flash
         )
     }

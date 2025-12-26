@@ -12,6 +12,7 @@ import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.llms.SingleLLMPromptExecutor
 import com.hassan.kooged.agents.completeSentences.entities.CompleteSentenceAgentOutput
 import com.hassan.kooged.agents.completeSentences.entities.SentenceSuggestionOutputEntity
+import com.hassan.kooged.agents.core.AiLoggingFeature
 import com.hassan.kooged.models.LlmContext
 import com.hassan.kooged.utils.LanguageConstants
 import kotlinx.serialization.json.Json
@@ -116,6 +117,9 @@ internal class CompleteSentenceAgentProviderImpl(
             agentConfig = agentConfig,
             toolRegistry = toolRegistry,
         ) {
+            install(AiLoggingFeature) {
+                loggerName = "complete-sentence-agent"
+            }
             handleEvents {
                 onToolCallStarting { ctx ->
                     onToolCallEvent("Tool ${ctx.toolName}, args ${ctx.toolArgs}")
