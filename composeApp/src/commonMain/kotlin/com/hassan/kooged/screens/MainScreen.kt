@@ -82,6 +82,17 @@ private fun Content(
                     )
                 }
 
+                item {
+                    Button(
+                        content = {
+                            Text(text = "Movies One-Liners Agent")
+                        },
+                        onClick = {
+                            goToScreen(Route.MoviesOneLineGeneratorAgent)
+                        }
+                    )
+                }
+
             }
         }
     )

@@ -20,4 +20,7 @@ sealed interface Route : NavKey {
 
     @Serializable
     data object ImageModerationAgent : Route
+
+    @Serializable
+    data object MoviesOneLineGeneratorAgent : Route
 }
