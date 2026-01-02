@@ -59,6 +59,17 @@ val strategy1 = strategy<String, String>("test-strategy") {
 
     edge(
         (nodeSendToolResultMultiple forwardTo nodeExecuteToolMultiple) onToolCall { true })
+}
 
-    edge((nodeSendToolResultMultiple forwardTo nodeFinish) transformed { it } onAssistantMessage { true })
+val myStrategyBasic = strategy<String, String>("my-strategy") {
+    val nodeCallLLM by nodeLLMRequest()
+    val executeToolCall by nodeExecuteTool()
+    val sendToolResult by nodeLLMSendToolResult()
+
+    edge(nodeStart forwardTo nodeCallLLM)
+    edge(nodeCallLLM forwardTo nodeFinish onAssistantMessage { true })
+    edge(nodeCallLLM forwardTo executeToolCall onToolCall { true })
+    edge(executeToolCall forwardTo sendToolResult)
+    edge(sendToolResult forwardTo nodeFinish onAssistantMessage { true })
+    edge(sendToolResult forwardTo executeToolCall onToolCall { true })
 }

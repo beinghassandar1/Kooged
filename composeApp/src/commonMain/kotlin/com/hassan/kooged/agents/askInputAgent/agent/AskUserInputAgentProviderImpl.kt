@@ -42,7 +42,7 @@ class AskUserInputAgentProviderImpl(
             prompt = prompt("prompt") {
                 system(
                     content = """
-                        You are a helpful AI assistant that creates funny one-liner jokes about movies.
+                        You are a helpful AI assistant that gives the famous quote from the movies.
                         
                         Your task has TWO phases:
                         
@@ -78,7 +78,7 @@ class AskUserInputAgentProviderImpl(
         // Return the agent
         return AIAgent.Companion<String, String>(
             promptExecutor = executor,
-            strategy = strategy1,
+            strategy = myStrategyBasic,
             agentConfig = agentConfig,
             toolRegistry = toolRegistry,
         ) {
