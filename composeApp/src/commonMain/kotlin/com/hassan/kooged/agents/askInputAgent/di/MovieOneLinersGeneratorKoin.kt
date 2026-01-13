@@ -11,7 +11,8 @@ val movieOneLinersModule = module {
 
     single<AskUserInputAgentProvider> {
         AskUserInputAgentProviderImpl(
-            llmContext = get<AgentContextHelper>().getOllamaQwen06Client(),
+//            llmContext = get<AgentContextHelper>().getOllamaQwen06Client(),
+            llmContext = get<AgentContextHelper>().getOllamaLlama3_2Client(),
         )
     }
     viewModel {

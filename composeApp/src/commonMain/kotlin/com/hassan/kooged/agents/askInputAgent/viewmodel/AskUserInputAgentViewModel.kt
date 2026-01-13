@@ -19,7 +19,6 @@ import kotlinx.coroutines.withContext
 data class AskUserInputUiState(
     val messages: List<Message> = emptyList(),
     val isLoading: Boolean = false,
-    val isInputEnabled: Boolean = true,
     val pendingUserInputRequest: AskUserInputRequest? = null,
     val currentUserResponse: AskUserInputResponse? = null
 )
@@ -48,7 +47,7 @@ class AskUserInputAgentViewModel(
 
     init {
         viewModelScope.launch {
-            runAgent("")
+            sendMessage("Hello")
         }
     }
 
@@ -61,7 +60,6 @@ class AskUserInputAgentViewModel(
                 it.copy(
                     messages = it.messages + Message.UserMessage(text),
                     isLoading = true,
-                    isInputEnabled = false
                 )
             }
 
@@ -104,7 +102,6 @@ class AskUserInputAgentViewModel(
                             _uiState.update {
                                 it.copy(
                                     messages = it.messages + Message.ErrorMessage(errorMessage),
-                                    isInputEnabled = true,
                                     isLoading = false
                                 )
                             }
@@ -139,14 +136,13 @@ class AskUserInputAgentViewModel(
                 )
 
                 // Execute the agent
-                val result = agent.run("Hello")
+                val result = agent.run(userInput)
 
                 // Add agent's final response to the chat
                 _uiState.update {
                     it.copy(
                         messages = it.messages + Message.AgentMessage(result),
                         isLoading = false,
-                        isInputEnabled = true
                     )
                 }
             } catch (e: Exception) {
@@ -154,7 +150,6 @@ class AskUserInputAgentViewModel(
                 _uiState.update {
                     it.copy(
                         messages = it.messages + Message.ErrorMessage("Error: ${e.message}"),
-                        isInputEnabled = true,
                         isLoading = false
                     )
                 }

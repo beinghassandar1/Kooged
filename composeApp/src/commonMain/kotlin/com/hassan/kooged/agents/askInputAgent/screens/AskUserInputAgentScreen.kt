@@ -15,8 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.hassan.kooged.agents.askInputAgent.AskUserInputRequest
 import com.hassan.kooged.agents.askInputAgent.AskUserInputResponse
@@ -75,7 +72,6 @@ fun AskUserInputAgentScreen(
     AskUserInputScreenContent(
         messages = uiState.messages,
         isLoading = uiState.isLoading,
-        isInputEnabled = uiState.isInputEnabled,
         pendingUserInputRequest = uiState.pendingUserInputRequest,
         onSendMessage = viewModel::sendMessage,
         onUserInputResponse = viewModel::respondToUserInputRequest,
@@ -90,7 +86,6 @@ fun AskUserInputAgentScreen(
 private fun AskUserInputScreenContent(
     messages: List<Message>,
     isLoading: Boolean,
-    isInputEnabled: Boolean,
     pendingUserInputRequest: AskUserInputRequest?,
     onSendMessage: (String) -> Unit,
     onUserInputResponse: (AskUserInputResponse) -> Unit,
@@ -171,51 +166,6 @@ private fun AskUserInputScreenContent(
                     request = pendingUserInputRequest,
                     onResponse = onUserInputResponse
                 )
-            }
-
-            // Input field
-            if (isInputEnabled && pendingUserInputRequest == null) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shadowElevation = 4.dp
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        OutlinedTextField(
-                            value = inputText,
-                            onValueChange = { inputText = it },
-                            placeholder = { Text("Type a message...") },
-                            modifier = Modifier.weight(1f),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                            keyboardActions = KeyboardActions(
-                                onSend = {
-                                    if (inputText.isNotBlank()) {
-                                        onSendMessage(inputText)
-                                        inputText = ""
-                                        focusManager.clearFocus()
-                                    }
-                                }
-                            )
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Button(
-                            onClick = {
-                                if (inputText.isNotBlank()) {
-                                    onSendMessage(inputText)
-                                    inputText = ""
-                                    focusManager.clearFocus()
-                                }
-                            },
-                            enabled = inputText.isNotBlank()
-                        ) {
-                            Text("Send")
-                        }
-                    }
-                }
             }
         }
     }

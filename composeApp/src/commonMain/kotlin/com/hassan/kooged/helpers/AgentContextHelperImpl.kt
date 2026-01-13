@@ -27,6 +27,13 @@ class AgentContextHelperImpl : AgentContextHelper {
         )
     }
 
+    override fun getOllamaLlama3_2Client(): LlmContext {
+        return LlmContext(
+            llmClient = OllamaClient(),
+            llmModel = OllamaModels.Meta.LLAMA_3_2
+        )
+    }
+
     override fun getLlamaGuard3ModerationClient(): LlmContext {
         return LlmContext(
             llmClient = OllamaClient(),
