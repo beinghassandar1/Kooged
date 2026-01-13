@@ -21,14 +21,13 @@ if (localPropertiesFile.exists()) {
     localProperties.load(localPropertiesFile.inputStream())
 }
 
-buildConfig {
     packageName("com.hassan.kooged")
     className("AppConfig")
 
-    val googleApiKey = localProperties.getProperty("GOOGLE_API_KEY")
+    val googleApiKey = localProperties.getProperty("GOOGLE_API_KEY") ?: System.getenv("GOOGLE_API_KEY") ?: ""
     buildConfigField("GOOGLE_API_KEY", googleApiKey)
 
-    val openAiApiKey = localProperties.getProperty("OPEN_AI_API_KEY")
+    val openAiApiKey = localProperties.getProperty("OPEN_AI_API_KEY") ?: System.getenv("OPEN_AI_API_KEY") ?: ""
     buildConfigField("OPEN_AI_API_KEY", openAiApiKey)
 }
 kotlin {
