@@ -20,7 +20,7 @@ val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
     localProperties.load(localPropertiesFile.inputStream())
 }
-
+buildConfig {
     packageName("com.hassan.kooged")
     className("AppConfig")
 
