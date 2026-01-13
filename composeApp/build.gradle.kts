@@ -23,6 +23,7 @@ if (localPropertiesFile.exists()) {
 
 buildConfig {
     packageName("com.hassan.kooged")
+    className("AppConfig")
 
     val googleApiKey = localProperties.getProperty("GOOGLE_API_KEY")
     buildConfigField("GOOGLE_API_KEY", googleApiKey)
