@@ -1,6 +1,40 @@
 This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM).
 
-I researched Koog, the official Kotlin AI Agent framework, and evaluated why it’s useful for building production AI workflows. 
+What I explored
+
+I researched Koog, the official Kotlin AI Agent framework, and evaluated why it’s useful for building production AI workflows. The framework focuses on:
+
+Predictability: replacing “guessing” with a clear action map
+
+Reliability: resuming exactly where it left off after crashes
+
+Efficiency: one logic system across cloud + mobile (Android/iOS)
+
+Control: easily swapping AI providers (OpenAI / Google) without rewriting logic 
+
+Koog’s differentiator is that it gives structured control over agent behavior, helping avoid unpredictable outputs and making it stable enough for real product usage.
+
+What makes Koog special
+
+From the research, Koog stands out for:
+
+Logic-based control: better alignment with product/business rules
+
+Production-ready stability: moving beyond “AI prototype” into reliable software
+
+Universal integration: supports many use cases with consistent architecture across platforms
+
+
+
+Strategy + Graph-based execution
+
+Koog supports predefined strategies for different interaction types:
+
+Single Run Strategy
+For non-interactive tasks: run once → return final output.
+
+Chat Agent Strategy
+Designed for multi-step chat conversations and interactive flows.
 
 What I built (Hands-on prototypes)
 
@@ -10,13 +44,13 @@ During the research, I built multiple working agents to validate Koog in real wo
 
 Input: partial sentence
 
-Output: completed sentence (similar to Google Translate suggestion behavior) DDD - Koog Ai Agent in Kotlin
+Output: completed sentence (similar to Google Translate suggestion behavior) 
 
 2) Text Moderation Agent
 
 Uses LLAMA_GUARD_3 to classify whether text is safe
 
-Returns violation categories + confidence score (if unsafe) DDD - Koog Ai Agent in Kotlin
+Returns violation categories + confidence score (if unsafe) 
 
 3) Test Generator from Chat Conversation
 
@@ -38,11 +72,12 @@ Translate
 
 Sentence ordering
 
-Open-ended DDD - Koog Ai Agent in Kotlin
+Open-ended
 
 4) User Input → Agent Output Flow
 
-Built a generic flow where agent takes user input and produces an LLM-generated result DDD - Koog Ai Agent in Kotlin
+Built a generic flow where agent takes user input and produces an LLM-generated result
+
 
 * [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
