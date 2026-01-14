@@ -4,10 +4,13 @@ What I explored
 
 I researched Koog, the official Kotlin AI Agent framework, and evaluated why it’s useful for building production AI workflows. The framework focuses on:
 
-- **Predictability**: replacing "guessing" with a clear action map
-- **Reliability**: resuming exactly where it left off after crashes
-- **Efficiency**: one logic system across cloud + mobile (Android/iOS)
-- **Control**: easily swapping AI providers (OpenAI / Google) without rewriting logic
+Predictability: replacing “guessing” with a clear action map
+
+Reliability: resuming exactly where it left off after crashes
+
+Efficiency: one logic system across cloud + mobile (Android/iOS)
+
+Control: easily swapping AI providers (OpenAI / Google) without rewriting logic 
 
 Koog’s differentiator is that it gives structured control over agent behavior, helping avoid unpredictable outputs and making it stable enough for real product usage.
 
@@ -15,9 +18,11 @@ What makes Koog special
 
 From the research, Koog stands out for:
 
-- **Logic-based control**: better alignment with product/business rules
-- **Production-ready stability**: moving beyond "AI prototype" into reliable software
-- **Universal integration**: supports many use cases with consistent architecture across platforms
+Logic-based control: better alignment with product/business rules
+
+Production-ready stability: moving beyond “AI prototype” into reliable software
+
+Universal integration: supports many use cases with consistent architecture across platforms
 
 
 
