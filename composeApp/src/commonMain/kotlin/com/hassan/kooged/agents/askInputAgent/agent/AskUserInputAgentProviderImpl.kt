@@ -10,6 +10,7 @@ import co.touchlab.kermit.Logger
 import com.hassan.kooged.agents.askInputAgent.AskUserInputRequest
 import com.hassan.kooged.agents.askInputAgent.AskUserInputResponse
 import com.hassan.kooged.agents.askInputAgent.AskUserInputTool
+import com.hassan.kooged.agents.core.AiLoggingFeature
 import com.hassan.kooged.models.LlmContext
 
 /**
@@ -82,6 +83,11 @@ class AskUserInputAgentProviderImpl(
             agentConfig = agentConfig,
             toolRegistry = toolRegistry,
         ) {
+
+            install(AiLoggingFeature) {
+                loggerName = "get-input-agent"
+            }
+
             handleEvents {
                 onToolCallFailed { ctx ->
                     Logger.d("Tool call failed: $ctx")
