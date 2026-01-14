@@ -40,7 +40,7 @@ private fun Preview() {
     Content(
         goBack = {},
         onGenerateTestClicked = {},
-        state = AgentDemoUiState("Title", state = TestGeneratorState.Undefined),
+        state = AgentDemoUiState("Title ", state = TestGeneratorState.Undefined),
         onClearClicked = {}
     )
 }
