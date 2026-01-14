@@ -1,5 +1,49 @@
 This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM).
 
+I researched Koog, the official Kotlin AI Agent framework, and evaluated why it’s useful for building production AI workflows. 
+
+What I built (Hands-on prototypes)
+
+During the research, I built multiple working agents to validate Koog in real workflows:
+
+1) Complete Sentence Agent
+
+Input: partial sentence
+
+Output: completed sentence (similar to Google Translate suggestion behavior) DDD - Koog Ai Agent in Kotlin
+
+2) Text Moderation Agent
+
+Uses LLAMA_GUARD_3 to classify whether text is safe
+
+Returns violation categories + confidence score (if unsafe) DDD - Koog Ai Agent in Kotlin
+
+3) Test Generator from Chat Conversation
+
+Input: a chat conversation
+
+Output: practice tests based on what was discussed
+
+Supports multiple question types:
+
+Yes/No
+
+Multiple Choice
+
+Fill in the blanks
+
+Matching
+
+Translate
+
+Sentence ordering
+
+Open-ended DDD - Koog Ai Agent in Kotlin
+
+4) User Input → Agent Output Flow
+
+Built a generic flow where agent takes user input and produces an LLM-generated result DDD - Koog Ai Agent in Kotlin
+
 * [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
   - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
