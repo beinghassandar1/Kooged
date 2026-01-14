@@ -51,7 +51,7 @@ class AskUserInputAgentProviderImpl(
                         Use the 'ask_user_input' tool to collect:
                         1. User's name (STRING type) - Ask: "What is your name?"
                         2. Their favorite movies (LIST type) - Ask: "What are your favorite movies?"
-                        2. One-Liners Contain explicit language (BOOLEAN type) - Ask: "Should it contain explicit language?"
+                        3. One-Liners Contain explicit language (BOOLEAN type) - Ask: "Should it contain explicit language?"
                         
                         Tool usage guide:
                         - STRING: For single text responses (like name)

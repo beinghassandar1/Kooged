@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hassan.kooged.agents.practiceLanguage.composables.GeneratedTestResult
+import com.hassan.kooged.agents.practiceLanguage.viewmodels.AgentDemoUiState
 import com.hassan.kooged.agents.practiceLanguage.viewmodels.TestGeneratorAgentViewModel
 import com.hassan.kooged.agents.practiceLanguage.viewmodels.TestGeneratorState
 import kooged.composeapp.generated.resources.Res
@@ -39,7 +40,7 @@ private fun Preview() {
     Content(
         goBack = {},
         onGenerateTestClicked = {},
-        state = TestGeneratorState.Undefined,
+        state = AgentDemoUiState("Title", state = TestGeneratorState.Undefined),
         onClearClicked = {}
     )
 }
@@ -51,9 +52,8 @@ fun TestGeneratorAgentsScreen(
     goBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val state = uiState.state
     Content(
-        state = state,
+        state = uiState,
         onGenerateTestClicked = {
             viewModel.generateStuff()
         },
@@ -69,7 +69,7 @@ fun TestGeneratorAgentsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Content(
-    state: TestGeneratorState,
+    state: AgentDemoUiState,
     onClearClicked: () -> Unit,
     onGenerateTestClicked: () -> Unit,
     goBack: () -> Unit,
@@ -79,7 +79,7 @@ private fun Content(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Complete Sentence Agent") },
+                title = { Text(state.title) },
                 navigationIcon = {
                     IconButton(onClick = goBack) {
                         Icon(
@@ -101,6 +101,7 @@ private fun Content(
                     .padding(paddingValues)
                     .fillMaxSize()
             ) {
+                val uiState = state.state
                 FlowRow {
                     Button(
                         content = {
@@ -111,7 +112,7 @@ private fun Content(
                         },
                         modifier = Modifier.wrapContentSize()
                     )
-                    if (state is TestGeneratorState.Result || state is TestGeneratorState.Error) {
+                    if (uiState is TestGeneratorState.Result || uiState is TestGeneratorState.Error) {
                         Button(
                             content = {
                                 Text("Clear")
@@ -125,10 +126,10 @@ private fun Content(
                 }
 
 
-                when (state) {
+                when (uiState) {
                     is TestGeneratorState.Error -> {
                         Text(
-                            text = state.message,
+                            text = uiState.message,
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
@@ -152,7 +153,7 @@ private fun Content(
 
                     is TestGeneratorState.Result -> {
                         GeneratedTestResult(
-                            data = state.result
+                            data = uiState.result
                         )
                     }
                 }
