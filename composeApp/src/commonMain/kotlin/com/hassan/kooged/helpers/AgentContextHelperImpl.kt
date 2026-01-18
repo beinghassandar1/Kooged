@@ -36,6 +36,53 @@ class AgentContextHelperImpl : AgentContextHelper {
         )
     }
 
+    override fun getMedGemmaClient(): LlmContext {
+        val standardCapabilities: List<LLMCapability> =
+            listOf(
+                LLMCapability.Temperature,
+                LLMCapability.Completion,
+                LLMCapability.MultipleChoices,
+            )
+
+        /** Capabilities for models that support tools/function calling */
+        val toolCapabilities: List<LLMCapability> =
+            listOf(
+                LLMCapability.Tools,
+                LLMCapability.ToolChoice,
+            )
+
+        /** Multimodal capabilities including vision (without tools) */
+        val multimodalCapabilities: List<LLMCapability> =
+            listOf(LLMCapability.Vision.Image, LLMCapability.Vision.Video, LLMCapability.Audio)
+
+        /** Native structured output capabilities */
+        val structuredOutputCapabilities: List<LLMCapability.Schema.JSON> =
+            listOf(
+                LLMCapability.Schema.JSON.Basic,
+                LLMCapability.Schema.JSON.Standard,
+            )
+
+        /** Full capabilities including standard, multimodal, tools and native structured output */
+        val fullCapabilities: List<LLMCapability> =
+            standardCapabilities +
+                    multimodalCapabilities +
+                    toolCapabilities +
+                    structuredOutputCapabilities
+        val Med_Gemma_1_5_4b: LLModel =
+            LLModel(
+                provider = LLMProvider.Google,
+                id = "medgemma-1.5-4b-it",
+                capabilities = fullCapabilities,
+                contextLength = 131_072,
+//                maxOutputTokens = 65_536,
+            )
+
+        return LlmContext(
+            llmClient = OllamaClient(baseUrl = "http://127.0.0.1:1234"),
+            llmModel = Med_Gemma_1_5_4b
+        )
+    }
+
     override fun getGemini3FlashClient(): LlmContext {
         /** Basic capabilities shared across all Gemini models */
         val standardCapabilities: List<LLMCapability> =

@@ -9,4 +9,5 @@ interface AgentContextHelper {
     fun getGemini3FlashClient(): LlmContext
     fun getLlamaGuard3ModerationClient(): LlmContext
     fun getOpenAiOmniModerationClient(): LlmContext
+    fun getMedGemmaClient(): LlmContext
 }

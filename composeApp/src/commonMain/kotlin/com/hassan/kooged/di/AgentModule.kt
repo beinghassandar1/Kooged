@@ -1,13 +1,10 @@
 package com.hassan.kooged.di
 
-import com.hassan.kooged.agents.completeSentences.agent.CompleteSentenceAgentProvider
-import com.hassan.kooged.agents.completeSentences.agent.CompleteSentenceAgentProviderImpl
 import com.hassan.kooged.agents.practiceLanguage.agent.TestGeneratorAgentProvider
 import com.hassan.kooged.agents.practiceLanguage.agent.TestGeneratorAgentProviderImpl
 import com.hassan.kooged.agents.practiceLanguage.viewmodels.TestGeneratorAgentViewModel
 import com.hassan.kooged.helpers.AgentContextHelper
 import com.hassan.kooged.helpers.AgentContextHelperImpl
-import com.hassan.kooged.viewmodels.CompleteSentenceAgentViewModel
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
@@ -17,19 +14,6 @@ internal class AgentModule {
 
     @Single(binds = [AgentContextHelper::class])
     fun provideAgentContextHelper() = AgentContextHelperImpl()
-
-    @Single(binds = [CompleteSentenceAgentProvider::class])
-    fun completeSentenceAgentProvider(
-        agentContextHelper: AgentContextHelper,
-    ) =
-        CompleteSentenceAgentProviderImpl(
-            llmContext = agentContextHelper.getGemini3FlashClient(),
-        )
-
-
-    @KoinViewModel
-    fun completeSentenceAgentViewModel(provider: CompleteSentenceAgentProvider) =
-        CompleteSentenceAgentViewModel(agentProvider = provider)
 
 
     @Single(binds = [TestGeneratorAgentProvider::class])
