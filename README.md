@@ -1,120 +1,195 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM).
+# Kooged 🤖
 
-I researched Koog, the official Kotlin AI Agent framework, and evaluated why it’s useful for building production AI workflows. 
-
-What I built (Hands-on prototypes)
-
-During the research, I built multiple working agents to validate Koog in real workflows:
-
-1) Complete Sentence Agent
-
-Input: partial sentence
-
-Output: completed sentence (similar to Google Translate suggestion behavior) DDD - Koog Ai Agent in Kotlin
-
-2) Text Moderation Agent
-
-Uses LLAMA_GUARD_3 to classify whether text is safe
-
-Returns violation categories + confidence score (if unsafe) DDD - Koog Ai Agent in Kotlin
-
-3) Test Generator from Chat Conversation
-
-Input: a chat conversation
-
-Output: practice tests based on what was discussed
-
-Supports multiple question types:
-
-Yes/No
-
-Multiple Choice
-
-Fill in the blanks
-
-Matching
-
-Translate
-
-Sentence ordering
-
-Open-ended DDD - Koog Ai Agent in Kotlin
-
-4) User Input → Agent Output Flow
-
-Built a generic flow where agent takes user input and produces an LLM-generated result DDD - Koog Ai Agent in Kotlin
-
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
-
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
-
-### Build and Run Android Application
-
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
-
-### Build and Run Desktop (JVM) Application
-
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
-
-### Build and Run Web Application
-
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE's toolbar or run it directly from the terminal:
-- for the Wasm target (faster, modern browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-- for the JS target (slower, supports older browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
-    ```
-
-### Build and Run iOS Application
-
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+A hands-on research project exploring [Koog](https://github.com/JetBrains/koog) — JetBrains' official Kotlin AI Agent framework — through real-world, working agent prototypes. Built with **Kotlin Multiplatform** and **Compose Multiplatform**, running on Android, iOS, Desktop (JVM), and Web.
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+## 🎯 What is this?
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+Kooged is a collection of AI agent demos that validate Koog in production-style workflows. Each agent is a fully functional prototype that can be explored, run, and extended.
+
+---
+
+## 🧠 Agents
+
+### 1. Complete Sentence Agent
+> *Finish what you started.*
+
+- **Input:** A partial sentence
+- **Output:** The completed sentence (think Google Translate auto-suggest, but smarter)
+- Demonstrates a simple single-turn LLM agent flow
+
+---
+
+### 2. Text Moderation Agent
+> *Keep conversations safe.*
+
+- Uses **LLAMA_GUARD_3** to classify whether text is safe or unsafe
+- Returns violation categories and a confidence score for unsafe content
+- Ideal for content filtering pipelines
+
+---
+
+### 3. Test Generator Agent
+> *Turn any conversation into a quiz.*
+
+- **Input:** A chat conversation or lesson transcript
+- **Output:** A full practice test based on the discussed content
+- Supports **7 question types:**
+  - ✅ Yes / No
+  - 🔘 Multiple Choice
+  - ✏️ Fill in the Blanks
+  - 🔗 Matching
+  - 🌍 Translate
+  - 🔀 Sentence Ordering
+  - 💬 Open-Ended
+
+---
+
+### 4. Movies One-Liners Agent
+> *Every movie, in one line.*
+
+- Takes a movie title or description as input
+- Returns a witty, memorable one-liner summary
+- Showcases creative LLM generation with a focused prompt
+
+---
+
+### 5. Ask User Input Agent
+> *Agent-driven interactive forms.*
+
+- The agent drives a multi-turn conversation, asking users targeted questions
+- Supports three structured input types:
+  - 📝 **Text** — names, emails, descriptions
+  - 📋 **List** — multiple selections or items
+  - ✔️ **Boolean** — Yes/No confirmations
+- Perfect for onboarding flows, surveys, bookings, and data collection
+- See the [dedicated docs](./composeApp/src/commonMain/kotlin/com/hassan/kooged/agents/askInputAgent/README.md) for full details
+
+---
+
+## 🏗️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Language | Kotlin Multiplatform |
+| UI | Compose Multiplatform + Material 3 |
+| AI Agents | [Koog](https://github.com/JetBrains/koog) (JetBrains) |
+| LLM Providers | Google Gemini, OpenAI |
+| DI | Koin |
+| Serialization | Kotlinx Serialization |
+| Async | Kotlin Coroutines |
+| Logging | Kermit |
+
+---
+
+## 📱 Supported Platforms
+
+| Platform | Status |
+|---|---|
+| Android | ✅ |
+| iOS | ✅ |
+| Desktop (JVM) | ✅ |
+| Web (Wasm) | ✅ |
+| Web (JS) | ✅ |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Android Studio (Hedgehog or newer) or IntelliJ IDEA
+- JDK 17+
+- Xcode (for iOS)
+- API keys for your LLM provider (Google Gemini or OpenAI)
+
+### Configuration
+
+Create a `local.properties` file in the root directory and add your API keys:
+
+```properties
+GOOGLE_API_KEY=your_google_api_key_here
+OPEN_AI_API_KEY=your_openai_api_key_here
+```
+
+---
+
+## 🔨 Build & Run
+
+### Android
+```shell
+# macOS/Linux
+./gradlew :composeApp:assembleDebug
+
+# Windows
+.\gradlew.bat :composeApp:assembleDebug
+```
+
+### Desktop (JVM)
+```shell
+# macOS/Linux
+./gradlew :composeApp:run
+
+# Windows
+.\gradlew.bat :composeApp:run
+```
+
+### Web (Wasm — modern browsers)
+```shell
+# macOS/Linux
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun
+
+# Windows
+.\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
+```
+
+### Web (JS — wider compatibility)
+```shell
+# macOS/Linux
+./gradlew :composeApp:jsBrowserDevelopmentRun
+
+# Windows
+.\gradlew.bat :composeApp:jsBrowserDevelopmentRun
+```
+
+### iOS
+
+Open the [`/iosApp`](./iosApp) directory in Xcode and run from there, or use the run configuration in Android Studio / IntelliJ IDEA.
+
+---
+
+## 📂 Project Structure
+
+```
+Kooged/
+├── composeApp/
+│   └── src/
+│       ├── commonMain/          # Shared code (all platforms)
+│       │   └── kotlin/com/hassan/kooged/
+│       │       ├── agents/      # All AI agent implementations
+│       │       │   ├── completeSentences/
+│       │       │   ├── textModeration/
+│       │       │   ├── practiceLanguage/   # Test Generator
+│       │       │   ├── imageModeration/
+│       │       │   └── askInputAgent/
+│       │       ├── screens/     # Compose UI screens
+│       │       ├── navigation/  # Navigation routes
+│       │       ├── di/          # Koin DI modules
+│       │       └── theme/       # App theme
+│       ├── androidMain/         # Android-specific code
+│       ├── iosMain/             # iOS-specific code
+│       └── jvmMain/             # Desktop-specific code
+└── iosApp/                      # iOS application entry point
+```
+
+---
+
+## 📖 Further Reading
+
+- [Ask User Input Agent — Full Docs](./composeApp/src/commonMain/kotlin/com/hassan/kooged/agents/askInputAgent/README.md)
+- [Quick Start Guide](./QUICK_START.md)
+- [Implementation Summary](./IMPLEMENTATION_SUMMARY.md)
+- [Koog Framework](https://github.com/JetBrains/koog)
+- [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)
+- [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform)
